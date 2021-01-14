@@ -1,1 +1,1 @@
-# aql-editor-backend-spring-boot-starter
+# Spring boot starter for the AQL editor backend
