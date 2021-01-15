@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-    path = "/rest/v1/aql",
+    path = "/aqleditor/v1/aql",
     produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
 public class AqlEditorAqlController extends BaseController {
