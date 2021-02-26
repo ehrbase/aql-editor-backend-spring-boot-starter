@@ -21,8 +21,11 @@ package org.ehrbase.aqleditor.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ehrbase.aql.binder.AqlBinder;
 import org.ehrbase.aql.dto.AqlDto;
@@ -30,7 +33,9 @@ import org.ehrbase.aql.dto.condition.ConditionComparisonOperatorDto;
 import org.ehrbase.aql.dto.condition.ConditionDto;
 import org.ehrbase.aql.dto.condition.ConditionLogicalOperatorDto;
 import org.ehrbase.aql.dto.condition.ParameterValue;
+import org.ehrbase.aql.parser.AqlParseException;
 import org.ehrbase.aql.parser.AqlToDtoParser;
+import org.ehrbase.aqleditor.dto.aql.QueryValidationResponse;
 import org.ehrbase.aqleditor.dto.aql.Result;
 import org.ehrbase.client.aql.query.EntityQuery;
 import org.ehrbase.client.aql.record.Record;
@@ -66,6 +71,16 @@ public class AqlEditorAqlService {
     return aqlDto;
   }
 
+  public QueryValidationResponse validateAql(Result query) {
+    try {
+      new AqlToDtoParser().parse(query.getQ());
+    } catch (AqlParseException e) {
+      return buildResponse(e.getMessage());
+    }
+
+    return QueryValidationResponse.builder().valid(true).message("Query is valid").build();
+  }
+
   private List<ParameterValue> extractParameterValues(ConditionDto conditionDto) {
     List<ParameterValue> values = new ArrayList<>();
 
@@ -83,5 +98,24 @@ public class AqlEditorAqlService {
     }
 
     return values;
+  }
+
+  public QueryValidationResponse buildResponse(String errorMessage) {
+    if (StringUtils.isEmpty(errorMessage)) {
+      return QueryValidationResponse.builder().valid(false).build();
+    }
+
+    Pattern pattern = Pattern.compile("^.*line (\\d+): char (\\d+) (.*).*$");
+    Matcher matcher = pattern.matcher(errorMessage);
+
+    if (matcher.matches()) {
+      String line = matcher.group(1);
+      String column = matcher.group(2);
+      String error = matcher.group(3);
+      return QueryValidationResponse.builder().valid(false).error(error).message(errorMessage)
+          .startColumn(column).startLine(line).build();
+    }
+
+    return QueryValidationResponse.builder().valid(false).message(errorMessage).build();
   }
 }

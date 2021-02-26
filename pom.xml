@@ -22,7 +22,7 @@
 
   <groupId>org.ehrbase.openehr</groupId>
   <artifactId>aql-editor-backend-spring-boot-starter</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>v0.1.0</version>
   <packaging>jar</packaging>
 
   <repositories>
@@ -36,7 +36,7 @@
     <maven.compiler.release>11</maven.compiler.release>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <ehrbase.sdk.version>96f3d62</ehrbase.sdk.version>
+    <ehrbase.sdk.version>v1.1.0</ehrbase.sdk.version>
     <commons.lang3.version>3.8</commons.lang3.version>
   </properties>
 
@@ -79,6 +79,16 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
