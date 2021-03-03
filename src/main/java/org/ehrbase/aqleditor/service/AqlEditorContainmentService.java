@@ -29,6 +29,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.ehrbase.aqleditor.dto.containment.ContainmentDto;
@@ -87,8 +89,8 @@ public class AqlEditorContainmentService {
 
     } else {
       RMTypeInfo typeInfo = ARCHIE_RM_INFO_LOOKUP.getTypeInfo(childNode.getRmType());
-      RmClassGeneratorConfig rmClassGeneratorConfig = configMap.get(typeInfo.getJavaClass());
-      if (rmClassGeneratorConfig == null || !rmClassGeneratorConfig.isExpandField()) {
+      RmClassGeneratorConfig rmClassGeneratorConfig = Optional.ofNullable(typeInfo).map(RMTypeInfo::getJavaClass).map(configMap::get).orElse(null);
+      if (typeInfo == null ||rmClassGeneratorConfig == null || !rmClassGeneratorConfig.isExpandField()) {
         FieldDto fieldDto = new FieldDto();
         fieldDto.setName(childNode.getName());
         fieldDto.setRmType(childNode.getRmType());
