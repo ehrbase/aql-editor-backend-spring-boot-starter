@@ -19,45 +19,36 @@
 package org.ehrbase.aqleditor.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.ehrbase.aqleditor.dto.template.TemplateDto;
+import org.ehrbase.client.openehrclient.defaultrestclient.DefaultRestClient;
+import org.ehrbase.response.openehr.TemplatesResponseData;
 import org.ehrbase.webtemplate.filter.Filter;
 import org.ehrbase.webtemplate.model.WebTemplate;
 import org.ehrbase.webtemplate.parser.OPTParser;
-import org.openehr.schemas.v1.OPERATIONALTEMPLATE;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class AqlEditorTemplateService {
 
-  private static final TestDataTemplateProvider testDataTemplateProvider =
-      new TestDataTemplateProvider();
+  private final DefaultRestClient restClient;
 
   public List<TemplateDto> getAll() {
-    return testDataTemplateProvider.listTemplateIds().stream()
-        .map(testDataTemplateProvider::find)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .map(this::map)
+    TemplatesResponseData responseData = restClient.templateEndpoint().findAllTemplates();
+    return responseData.get().stream()
+        .map(templateMetaDataDto -> TemplateDto.builder()
+            .templateId(templateMetaDataDto.getTemplateId())
+            .description(templateMetaDataDto.getConcept()).build())
         .collect(Collectors.toList());
   }
 
   public WebTemplate getWebTemplate(String templateId) {
-    return testDataTemplateProvider
-        .find(templateId)
+    return restClient.templateEndpoint().findTemplate(templateId)
         .map(o -> new OPTParser(o).parse())
         .map(w -> new Filter().filter(w))
         .orElse(null);
   }
 
-  private TemplateDto map(OPERATIONALTEMPLATE operationaltemplate) {
-    TemplateDto templateDto = new TemplateDto();
-    templateDto.setTemplateId(operationaltemplate.getTemplateId().getValue());
-    templateDto.setDescription(
-        operationaltemplate.getDescription().getDetailsArray()[0].getPurpose());
-    return templateDto;
-  }
 }
