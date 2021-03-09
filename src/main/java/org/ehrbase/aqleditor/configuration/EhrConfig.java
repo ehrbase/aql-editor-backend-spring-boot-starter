@@ -7,6 +7,8 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.ehrbase.aqleditor.properties.EhrProperties;
 import org.ehrbase.client.openehrclient.OpenEhrClientConfig;
 import org.ehrbase.client.openehrclient.defaultrestclient.DefaultRestClient;
@@ -27,7 +29,10 @@ public class EhrConfig {
         new UsernamePasswordCredentials(
             ehrProperties.getUsername(), ehrProperties.getPassword()));
 
+    CloseableHttpClient httpClient =
+        HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+
     return new DefaultRestClient(
-        new OpenEhrClientConfig(new URI(ehrProperties.getRestApiUrl())));
+        new OpenEhrClientConfig(new URI(ehrProperties.getRestApiUrl())), null, httpClient);
   }
 }
