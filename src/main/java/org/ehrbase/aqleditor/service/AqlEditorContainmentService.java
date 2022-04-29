@@ -38,7 +38,7 @@ import org.ehrbase.serialisation.util.SnakeCase;
 import org.ehrbase.util.reflection.ReflectionHelper;
 import org.ehrbase.webtemplate.model.WebTemplate;
 import org.ehrbase.webtemplate.model.WebTemplateNode;
-import org.ehrbase.webtemplate.parser.FlatPath;
+import org.ehrbase.webtemplate.parser.AqlPath;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -94,7 +94,7 @@ public class AqlEditorContainmentService {
         fieldDto.setRmType(childNode.getRmType());
         String relativAql =
             StringUtils.removeStart(childNode.getAqlPath(), context.aqlQueue.peek());
-        fieldDto.setAqlPath(new FlatPath(relativAql).format(false));
+        fieldDto.setAqlPath(AqlPath.parse(relativAql).format(false));
         context.nodeQueue.push(childNode);
         fieldDto.setHumanReadablePath(buildHumanReadablePath(context));
         context.containmentQueue.peek().getFields().add(fieldDto);
@@ -109,7 +109,7 @@ public class AqlEditorContainmentService {
           String relativAql =
               StringUtils.removeStart(childNode.getAqlPath(), context.aqlQueue.peek());
           fieldDto.setAqlPath(
-              new FlatPath(relativAql + "/" + rmAttributeInfo.getRmName()).format(false));
+              AqlPath.parse(relativAql + "/" + rmAttributeInfo.getRmName()).format(false));
           context.nodeQueue.push(childNode);
           fieldDto.setHumanReadablePath(
               buildHumanReadablePath(context) + "/" + rmAttributeInfo.getRmName());
