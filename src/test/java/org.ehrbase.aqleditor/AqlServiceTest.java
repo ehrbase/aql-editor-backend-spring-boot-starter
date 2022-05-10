@@ -35,7 +35,7 @@ public class AqlServiceTest {
     assertThat(response.getStartColumn(), is("0"));
     assertThat(response.getStartLine(), is("1"));
     assertThat(response.getMessage(),
-        containsStringIgnoringCase("AQL Parse exception: line 1: char 0"));
+        containsStringIgnoringCase("Parse exception: line 1: char 0 mismatched input 'invalid' expecting SELECT"));
     assertThat(response.getError(),
         containsStringIgnoringCase("mismatched input 'invalid' expecting SELECT"));
   }
@@ -52,7 +52,7 @@ public class AqlServiceTest {
     assertThat(response.getStartColumn(), is("23"));
     assertThat(response.getStartLine(), is("1"));
     assertThat(response.getMessage(),
-        containsStringIgnoringCase("AQL Parse exception: line 1: char 23"));
+        containsStringIgnoringCase("Parse exception: line 1: char 23 mismatched input 'where' expecting {DISTINCT, FUNCTION_IDENTIFIER, EXTENSION_IDENTIFIER, IDENTIFIER, INTEGER, STRING}"));
     assertThat(response.getError(),
         containsStringIgnoringCase("mismatched input 'where' expecting {DISTINCT, FUNCTION_IDENTIFIER, EXTENSION_IDENTIFIER, IDENTIFIER, INTEGER, STRING}"));
   }
